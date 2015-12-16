@@ -37,6 +37,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".DataActivity">
+
+
+        </activity>
+
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBEfCoUeDXv--scJHCzOroAMB-e3E0Eo6M" />

@@ -1,6 +1,7 @@
 package com.example.asy.mobileproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,8 +22,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainActivity extends AppCompatActivity {
     LatLng MyLocation;
     private GoogleMap map;
+    Intent intent;
     TextView logView;
-    Button bt;
+    Button bt1;
+    Button bt2;
     double lng;
     double lat;
 
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 lat = location.getLatitude();
                 lng = location.getLongitude();
-
+                logView.setText("latitude: " + lat + ", longitude: " + lng);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -61,16 +64,25 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
 
-        bt = (Button) findViewById(R.id.bt_1);
-        bt.setOnClickListener(new View.OnClickListener() {
+        bt1 = (Button) findViewById(R.id.bt_1);
+        bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logView.setText("latitude: " + lat + ", longitude: " + lng);
                 MyLocation = new LatLng( lat, lng);
                 map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-                Marker seoul = map.addMarker(new MarkerOptions().position(MyLocation).title("Seoul"));
+                Marker me = map.addMarker(new MarkerOptions().position(MyLocation).title("me"));
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(MyLocation, 15));
                 map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            }
+        });
+
+        bt2 = (Button) findViewById(R.id.bt_2);
+        bt2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(MainActivity.this , DataActivity.class);
+                intent.putExtra("TextIn", logView.getText().toString());
+                startActivity(intent);
             }
         });
 
