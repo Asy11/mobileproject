@@ -25,13 +25,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-    LatLng MyLocation;
-    private GoogleMap map;
+
     Intent intent;
     TextView textView;
     EditText editText;
-    Button bt1;
     Button bt_save;
+    Button bt_move;
     double lng;
     double lat;
 
@@ -71,26 +70,22 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-
-        bt1 = (Button) findViewById(R.id.bt_1);
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyLocation = new LatLng( lat, lng);
-                map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-                Marker me = map.addMarker(new MarkerOptions().position(MyLocation).title("me"));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(MyLocation, 15));
-                map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-            }
-        });
-
         bt_save = (Button) findViewById(R.id.bt_save);
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String inputString = textView.getText().toString() + "," + editText.getText().toString() + "\n" + getDateString();
+                String inputString = textView.getText().toString() + "," + editText.getText().toString() + " " + getDateString();
                 intent = new Intent(MainActivity.this , DataActivity.class);
                 intent.putExtra("TextIn", inputString);
+                startActivity(intent);
+            }
+        });
+
+        bt_move = (Button) findViewById(R.id.bt_move);
+        bt_move.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(MainActivity.this , DataActivity.class);
                 startActivity(intent);
             }
         });

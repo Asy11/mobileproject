@@ -6,18 +6,25 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DataActivity extends AppCompatActivity {
+
+    LatLng MyLocation;
+    private GoogleMap map;
 
     TextView textView;
     EditText editText;
@@ -34,7 +41,14 @@ public class DataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data);
 
+        // // Database 생성 및 열기
+        db = openOrCreateDatabase(dbName, dbMode, null);
+        // 테이블 생성
+        createTable();
+
         textView = (TextView) findViewById(R.id.editText);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
         Intent intent = getIntent(); //전달된 인텐트
         String textIn = intent.getStringExtra("TextIn");
 
@@ -55,28 +69,25 @@ public class DataActivity extends AppCompatActivity {
                 try {
                     removeData(Integer.parseInt(editText.getText().toString()));
                     textView.setText(PrintData());
-                }
-                catch(NumberFormatException e){
+                    map.clear();
+                    PrintGoogleMap();
+                } catch (NumberFormatException e) {
                     Toast.makeText(DataActivity.this.getApplicationContext(), "입력이 잘못되었습니다.", Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-        String[] data = textIn.split(",");
-        double lat = Double.parseDouble(data[0]);
-        double lng = Double.parseDouble(data[1]);
-        String text = data[2];
-
-
-        // // Database 생성 및 열기
-        db = openOrCreateDatabase(dbName, dbMode, null);
-        // 테이블 생성
-        createTable();
-
-        //Insert
-        insertData(text, lat, lng);
-
+        try {
+            String[] data = textIn.split(",");
+            double lat = Double.parseDouble(data[0]);
+            double lng = Double.parseDouble(data[1]);
+            String text = data[2];
+            //Insert
+            insertData(text, lat, lng);
+        }
+        catch(NullPointerException e){}
         textView.setText(PrintData());
+
+        PrintGoogleMap();
 
     }
 
@@ -95,7 +106,7 @@ public class DataActivity extends AppCompatActivity {
 
     // Data 추가
     public void insertData(String name, double lat, double lng) {
-        String sql = "insert into " + tableName + " values(NULL, '" + name + "'," + lat + ',' + lng +");";
+        String sql = "insert into " + tableName + " values(NULL, '" + name + "'," + lat + ',' + lng + ");";
         db.execSQL(sql);
     }
 
@@ -110,14 +121,31 @@ public class DataActivity extends AppCompatActivity {
         String str = "";
 
         Cursor cursor = db.rawQuery("select * from idListTable", null);
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             str += cursor.getInt(0)
                     + " ) 일 혹은 사건 : "
                     + cursor.getString(1)
-                    + "\n\n";
+                    + "\n";
         }
 
         return str;
+    }
+
+    public void PrintGoogleMap(){
+
+        Cursor cursor = db.rawQuery("select * from idListTable", null);
+        while (cursor.moveToNext()) {
+            int index = cursor.getInt(0);
+            String doing = cursor.getString(1);
+            double lat = cursor.getDouble(2);
+            double lng = cursor.getDouble(3);
+            MyLocation = new LatLng(lat, lng);
+            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            Marker me = map.addMarker(new MarkerOptions().position(MyLocation).title(index + ") "+doing));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MyLocation, 15));
+            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        }
+
     }
 
 }
