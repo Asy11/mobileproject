@@ -26,10 +26,10 @@ public class DataActivity extends AppCompatActivity {
     LatLng MyLocation;
     private GoogleMap map;
 
-    TextView textView;
-    EditText editText;
-    Button bt_exit;
-    Button bt_remove;
+    TextView textView;      //db에 있는 모든 자료를 보여줄때 사용할 TextView
+    EditText editText;      //db에 있는 특정 자료를 삭제할때 사용할 EditText
+    Button bt_exit;         //이전 엑티비티로 되돌아가는데 사용할 Button
+    Button bt_remove;       //특정 자료를 삭제하는데 사용할 Button
 
     // Database 관련 객체들
     SQLiteDatabase db;
@@ -52,6 +52,7 @@ public class DataActivity extends AppCompatActivity {
         Intent intent = getIntent(); //전달된 인텐트
         String textIn = intent.getStringExtra("TextIn");
 
+        //이전 Activity로 되돌아감
         bt_exit = (Button) findViewById(R.id.bt_exit);
         bt_exit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +63,7 @@ public class DataActivity extends AppCompatActivity {
 
         editText = (EditText) findViewById(R.id.editText_remove);
 
+        //db의 특정 자료를 삭제
         bt_remove = (Button) findViewById(R.id.bt_remove);
         bt_remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,10 +74,12 @@ public class DataActivity extends AppCompatActivity {
                     map.clear();
                     PrintGoogleMap();
                 } catch (NumberFormatException e) {
+                    //입력이 없거나 문자를 입력할 시에 나타날 Toast
                     Toast.makeText(DataActivity.this.getApplicationContext(), "입력이 잘못되었습니다.", Toast.LENGTH_LONG).show();
                 }
             }
         });
+        
         try {
             String[] data = textIn.split(",");
             double lat = Double.parseDouble(data[0]);
@@ -131,6 +135,7 @@ public class DataActivity extends AppCompatActivity {
         return str;
     }
 
+    // 구글맵을 띄우고 Marker까지 찍는 메서드
     public void PrintGoogleMap(){
 
         Cursor cursor = db.rawQuery("select * from idListTable", null);
