@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,13 +20,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
     LatLng MyLocation;
     private GoogleMap map;
     Intent intent;
-    TextView logView;
+    TextView textView;
+    EditText editText;
     Button bt1;
-    Button bt2;
+    Button bt_save;
     double lng;
     double lat;
 
@@ -34,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        logView = (TextView) findViewById(R.id.log);
-        logView.setText("GPS 가 잡혀야 좌표가 구해짐");
+        editText = (EditText) findViewById(R.id.editText);
+
+        textView = (TextView) findViewById(R.id.log);
+        textView.setText("GPS 가 잡혀야 좌표가 구해짐");
 
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -49,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 lat = location.getLatitude();
                 lng = location.getLongitude();
-                logView.setText("latitude: " + lat + ", longitude: " + lng);
+                textView.setText(lat + "," + lng );
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -76,16 +84,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        bt2 = (Button) findViewById(R.id.bt_2);
-        bt2.setOnClickListener(new View.OnClickListener() {
+        bt_save = (Button) findViewById(R.id.bt_save);
+        bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String inputString = textView.getText().toString() + "," + editText.getText().toString() + "\n" + getDateString();
                 intent = new Intent(MainActivity.this , DataActivity.class);
-                intent.putExtra("TextIn", logView.getText().toString());
+                intent.putExtra("TextIn", inputString);
                 startActivity(intent);
             }
         });
 
 
+    }
+    public String getDateString()
+    {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.KOREA);
+        String str_date = df.format(new Date());
+
+        return str_date;
     }
 }

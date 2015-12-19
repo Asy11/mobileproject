@@ -33,8 +33,18 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="좌표저장"
-        android:id="@+id/bt_2"
+        android:text="Save"
+        android:id="@+id/bt_save"
         android:layout_below="@+id/log"
         android:layout_alignEnd="@+id/map" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bt_1"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/bt_1"
+        android:layout_alignEnd="@+id/bt_1" />
 </RelativeLayout>

@@ -15,4 +15,18 @@
         android:text="exit"
         android:id="@+id/bt_exit"
         android:layout_gravity="right" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="remove"
+        android:id="@+id/bt_remove"
+        android:layout_gravity="right" />
+
+    <EditText
+        android:layout_width="308dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_remove"
+        android:text="지울 번호 쓰는곳" />
+
 </LinearLayout>
